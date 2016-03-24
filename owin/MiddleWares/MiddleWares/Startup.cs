@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using MiddleWares.Middlewares;
+using Nancy;
+using Nancy.Owin;
 using Owin;
 
 namespace MiddleWares
@@ -28,9 +30,15 @@ namespace MiddleWares
                     Debug.WriteLine("Request took " + watch.ElapsedMilliseconds + " ms");
                 }
             });
+
+            //inspects the assmbly for all class inheriting from NanacyModule
+            //app.UseNancy();
+            //app.Map("/nancy", mappedApp => mappedApp.UseNancy());
+            app.UseNancy(config => config.PassThroughWhenStatusCodesAre(HttpStatusCode.NotFound));
+
             app.Use(async (ctx, next) =>
             {
-                await ctx.Response.WriteAsync("<html><head></head><body>Hello</body></html>");
+                await ctx.Response.WriteAsync("<html><head></head><body>Hello from Base</body></html>");
             });
         }
     }
