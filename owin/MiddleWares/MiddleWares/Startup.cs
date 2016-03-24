@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
+using System.Web.Http;
 using MiddleWares.Middlewares;
 using Nancy;
 using Nancy.Owin;
@@ -30,6 +31,10 @@ namespace MiddleWares
                     Debug.WriteLine("Request took " + watch.ElapsedMilliseconds + " ms");
                 }
             });
+
+            var httpConf = new HttpConfiguration();
+            httpConf.MapHttpAttributeRoutes();
+            app.UseWebApi(httpConf);
 
             //inspects the assmbly for all class inheriting from NanacyModule
             //app.UseNancy();
