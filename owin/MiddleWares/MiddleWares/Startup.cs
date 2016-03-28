@@ -36,15 +36,16 @@ namespace MiddleWares
             httpConf.MapHttpAttributeRoutes();
             app.UseWebApi(httpConf);
 
-            //inspects the assmbly for all class inheriting from NanacyModule
+            //inspects the assembly for all class inheriting from NanacyModule
             //app.UseNancy();
             //app.Map("/nancy", mappedApp => mappedApp.UseNancy());
             app.UseNancy(config => config.PassThroughWhenStatusCodesAre(HttpStatusCode.NotFound));
 
-            app.Use(async (ctx, next) =>
-            {
-                await ctx.Response.WriteAsync("<html><head></head><body>Hello from Base</body></html>");
-            });
+            //Need to comment this to pass to MVC
+            //app.Use(async (ctx, next) =>
+            //{
+            //    await ctx.Response.WriteAsync("<html><head></head><body>Hello from Base</body></html>");
+            //});
         }
     }
 }
