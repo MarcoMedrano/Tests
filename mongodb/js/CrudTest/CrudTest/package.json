@@ -1,0 +1,13 @@
+{
+  "name": "CrudTest",
+  "version": "0.0.0",
+  "description": "CrudTest",
+  "main": "app.js",
+  "author": {
+    "name": "marco.medrano",
+    "email": ""
+  },
+  "dependencies": {
+    "mongodb": "^2.1.11"
+  }
+}
