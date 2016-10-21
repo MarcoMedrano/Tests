@@ -1,0 +1,13 @@
+{
+  "name": "XAudio",
+  "version": "0.0.0",
+  "description": "XAudio",
+  "main": "server.js",
+  "author": {
+    "name": "marco.medrano",
+    "email": ""
+  },
+  "dependencies": {
+    "express": "^4.13.4"
+  }
+}

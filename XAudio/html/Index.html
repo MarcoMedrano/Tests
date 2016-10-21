@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="libs/resampler.js"></script>
+    <script src="libs/XAudioServer.js"></script>
+    <script src="libs/gsm.js"></script>
+    <script src="libs/WaveParser.js"></script>
+</head>
+<body>
+<script>
+    // Pretty good references:
+    // http://www.signalogic.com/index.pl?page=ms_waveform
+    // http://www.topherlee.com/software/pcm-tut-wavformat.html
+    // http://soundfile.sapp.org/doc/WaveFormat/
+    // http://blog.bjornroche.com/2013/05/the-abcs-of-pcm-uncompressed-digital.html
+    // 
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    var context = new AudioContext();
+
+    var audioFileUrl = "/res/techno.wav";
+    //var audioFileUrl = "/res/gate10.wav";
+    var encodedBuffer = null;
+    var encodedBufferOffset = 0;
+    var reachedEndOfBuffer = false;
+    var intervalId = 0;
+    var encode = 'unkonow'; //
+    var wav;
+
+    getSamplesCallback = function (samplesRequested) {
+        if (encode == 'gsm')
+            return decodeGsm(getEncodedBlocks());
+        else //assuming it is lpcm
+            return getPcmBlocks();
+    };
+
+    
+    failureCallback = function(e) {
+         console.error("Failure callback");
+    }
+
+    play = function() {
+        var xAudioServer = new XAudioServer(
+            wav.format.channelsPerFrame,
+            wav.format.sampleRate,
+            wav.format.sampleRate / 4,
+            wav.format.sampleRate / 2,
+            getSamplesCallback,
+            1,
+            failureCallback);
+
+        intervalId = setInterval(function () {
+            if (reachedEndOfBuffer) {
+                clearInterval(intervalId);
+                return;
+            }
+
+            xAudioServer.executeCallback();
+        }, 200);
+    };
+
+    loadFile = function() {
+        var request = new XMLHttpRequest();
+        request.open('GET', audioFileUrl, true);
+        request.responseType = 'arraybuffer';
+
+        // Decode asynchronously
+        request.onload = function () {
+            var uint8Array = new Uint8Array(request.response);
+            console.info('received ' + uint8Array.length);
+
+            wav = new WaveParser(uint8Array);
+            wav.ReadHeader();
+            encode = wav.format.formatID;
+            var offset = wav.GetHeaderSize();
+
+            encodedBuffer = uint8Array.slice(offset, uint8Array.byteLength);
+            //decodeAndPlay(request.response);
+            play();
+        }
+        request.send();
+    };
+
+
+    //Init GSM
+    Module.ccall('Initialize');
+
+    decodeGsm = function (encodedBuffer) {
+        var decodedSamples = 3200;
+        var inputPtr = Module._malloc(encodedBuffer.length * encodedBuffer.BYTES_PER_ELEMENT);
+        Module.HEAPU8.set(encodedBuffer, inputPtr);
+
+        var buf = Module._malloc(decodedSamples * Int16Array.BYTES_PER_ELEMENT);
+        var len2 = Module.ccall('decode_block', 'number', ['pointer', 'number', 'pointer'], [inputPtr, encodedBuffer.length, buf]);
+
+        var decodedBuffer = new Int16Array(Module.HEAPU8.buffer.slice(buf, buf + len2));
+        var decodedFloat = new Float32Array(decodedSamples);
+
+        for (var i = 0; i < decodedSamples; i++) {
+            decodedFloat[i] = (decodedBuffer[i] / 32768);
+        }
+
+        //console.log("GsmDecoder: DecodeEncodedBlock: Size is " + deencodedBuffer.length);
+        return decodedFloat; // this should be 320 floats break point to ensure logic comes out this way, if not, something small above is wrong    
+    };
+
+    this.getEncodedBlocks = function () {
+        var encodedBlockSize = 65 * 10;
+
+        var buffer = new Uint8Array(encodedBlockSize);
+        for (var i = 0; i < encodedBlockSize; i++) {
+            buffer[i] = this.encodedBuffer[encodedBufferOffset++];
+        }
+
+        if (encodedBufferOffset >= this.encodedBuffer.length)
+            reachedEndOfBuffer = true;
+
+        return buffer;
+    };
+
+    this.getPcmBlocks = function () {
+        var conversionFact = Math.pow(2, wav.format.significantBitsPerSample - 1);
+
+        var int16Array = new Int16Array(encodedBuffer.buffer, encodedBufferOffset);
+        
+        var decodedFloat = new Float32Array(3200*8);
+
+        for (var i = 0; i < decodedFloat.length ; i++) {
+            decodedFloat[i] = int16Array[i] / conversionFact;
+            encodedBufferOffset += int16Array.BYTES_PER_ELEMENT;
+        }
+
+        if (encodedBufferOffset >= this.encodedBuffer.length)
+            reachedEndOfBuffer = true;
+
+        return decodedFloat;
+    };
+
+    swap16 = function(val) {
+        return ((val & 0xFF) << 8)
+            | ((val >> 8) & 0xFF);
+    };
+
+    decodeAndPlay = function(buffer) {
+        context.decodeAudioData(buffer, playWithAudioContext, function(e) { console.error(e); });    
+    };
+
+    playWithAudioContext = function (buffer) {
+        var source = context.createBufferSource(); // creates a sound source
+        source.buffer = buffer;                    // tell the source which sound to play
+        source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+        source.start(0);                           // play the source now
+    };
+
+    this.loadFile();
+</script>
+Hola nena
+
+</body>
+</html>
