@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="libs/resampler.js"></script>
+    <script src="libs/XAudioServer.js"></script>
+    <script src="libs/gsm.js"></script>
+    <script src="libs/WaveParser.js"></script>
+</head>
+<body>
+<script>
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    var context = new AudioContext();
+    var buf = null;
+    var encodedBuffer;
+    var audioFileUrl = "/res/pcm-mono.wav";
+    //var audioFileUrl = "/res/gate10.wav";
+
+    function playFile(byteArray) {
+
+        //var arrayBuffer = new ArrayBuffer(byteArray.length);
+        //var bufferView = new Uint8Array(arrayBuffer);
+        //for (i = 0; i < byteArray.length; i++) {
+        //    bufferView[i] = byteArray[i];
+        //}
+
+        context.decodeAudioData(byteArray.buffer, function (buffer) {
+            buf = buffer;
+            play();
+        });
+    }
+
+    function playPcmDataOnly(uint8Array, wav) {
+        var audioBuffer = context.createBuffer(wav.format.channelsPerFrame, wav.GetNumberOfSamples(), wav.format.sampleRate);
+
+        var samplesOnFloat32 = audioBuffer.getChannelData(0);
+        //conversionFact = Math.pow(2, wav.format.significantBitsPerSample -1) ;  -1 FORSIGNED PCM WAVE, hwo to know??
+        var conversionFact = Math.pow(2, wav.format.significantBitsPerSample) ; //Math.pow(2, 8);
+        for (var i = 0; i < uint8Array.byteLength; i++) {
+            samplesOnFloat32[i] = uint8Array[i] / conversionFact;
+        }
+
+        // This is the AudioNode to use when we want to play an AudioBuffer
+        var source = context.createBufferSource();
+        // set the buffer in the AudioBufferSourceNode
+        source.buffer = audioBuffer;
+        // connect the AudioBufferSourceNode to the
+        // destination so we can hear the sound
+        source.connect(context.destination);
+        // start the source playing
+        source.start(0);
+    }
+
+    // Play the loaded file
+    function play() {
+        // Create a source node from the buffer
+        var source = context.createBufferSource();
+        source.buffer = buf;
+        // Connect to the final output node (the speakers)
+        source.connect(context.destination);
+        // Play immediately
+        source.start(0);
+    }
+    
+    loadFile = function() {
+        var request = new XMLHttpRequest();
+        request.open('GET', audioFileUrl, true);
+        request.responseType = 'arraybuffer';
+
+        // Decode asynchronously
+        request.onload = function () {
+            var uint8Array = new Uint8Array(request.response);
+            //console.info('received ' + uint8Array.length);
+
+            var waveParser = new WaveParser(uint8Array);
+            waveParser.ReadHeader();
+            encode = waveParser.format.formatID;
+            var offset = waveParser.GetHeaderSize();
+
+            encodedBuffer = uint8Array.slice(offset, uint8Array.byteLength);
+            
+            playPcmDataOnly(encodedBuffer, waveParser);
+            //playFile(uint8Array);
+        }
+        request.send();
+    };
+
+
+    this.loadFile();
+</script>
+Hola nena
+
+</body>
+</html>
