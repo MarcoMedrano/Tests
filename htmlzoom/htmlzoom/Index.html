@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html ng-app="webPlayerApp">
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <script src="scripts/libs/angular/angular.min.js"></script>
+    <script src="scripts/libs/angular-slider/angular-awesome-slider.min.js"></script>
+    <script src="scripts/libs/angular-growl/angular-growl.js"></script>
+    <script>
+        var app = angular.module('webPlayerApp', []);
+        console.info("hello");
+    </script>
+    <script src="scripts/ButtonsComponent.js"></script>
+
+    <link href="scripts/libs/angular-slider/css/angular-awesome-slider.min.css" rel="stylesheet" />
+    <link href="scripts/libs/angular-growl/angular-growl.css" rel="stylesheet" />
+    <link href="scripts/libs/bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <link href="css/VideoBar/Video.css" rel="stylesheet" />
+</head>
+<body>
+<div id="mainPlayer" ng-controller="CanvasController as self">
+    <div class="back no-highlighting">
+        <div data-qaattr="screen_Capture_Button_Up" class="videoButton videoMoveUpButton no-highlighting" ng-click="self.cursorUp()">
+            <i data-qaattr="screen_Capture_Button_Up_Icon" class="videoButton-icon glyphicon glyphicon-arrow-up"></i>
+        </div>
+        <div data-qaattr="screen_Capture_Button_Rigth" class="videoButton videoMoverigthButton no-highlighting" ng-click="self.cursorRight()">
+            <i data-headline2="screen_Capture_Button_Rigth_Icon" class="videoButton-icon glyphicon glyphicon-arrow-right"></i>
+        </div>
+        <div data-qaattr="screen_Capture_Button_Left" class="videoButton videoMoveleftButton no-highlighting" ng-click="self.cursorLeft()">
+            <i data-qaattr="screen_Capture_Button_Left_Icon" class="videoButton-icon glyphicon glyphicon-arrow-left"></i>
+        </div>
+        <div data-qaattr="screen_Capture_Button_Down" class="videoButton videoMovedownButton no-highlighting" ng-click="self.cursorDown()">
+            <i data-qaattr="screen_Capture_Button_Down_Icon" class="videoButton-icon glyphicon glyphicon-arrow-down"></i>
+        </div>
+        <div data-qaattr="screen_Capture_Button_Zoom_In" class="videoButton videoMoveZoomInButton no-highlighting" title="Zoom In" ng-click="self.zoomIn()">
+            <i data-qaattr="screen_Capture_Button_Zoom_In_Icon" class="videoZoomButton-icon glyphicon glyphicon-plus-sign"></i>
+        </div>
+        <div data-qaattr="screen_Capture_Button_Zoom_Out" class="videoButton videoMoveZoomOutButton no-highlighting" title="Zoom Out" ng-click="self.zoomOut()">
+            <i data-qaattr="screen_Capture_Button_Zoom_Out_Icon" class="videoZoomButton-icon glyphicon glyphicon-minus-sign"></i>
+        </div>
+    </div>
+
+    <video-panel zoomable="true" maxscale="videoZoomScale" mode="videoImageMode" class="ng-isolate-scope">
+        <videoc id="videoContainer" style="position: absolute; border: 1px solid black; z-index: 1;">
+            <canvas id="canvasVideo" moz-opaque="" style="position: relative; border: 1px solid black; z-index: 1; width: 100%; height: 100%;" width="1120" height="731"></canvas>
+        </videoc>
+    </video-panel>
+</div>
+
+    <script src="scripts/app.js"></script>
+
+</body>
+</html>

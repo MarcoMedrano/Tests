@@ -1,0 +1,186 @@
+﻿
+#videoContainer{
+	position: absolute;
+	left: 10px;
+	top: 40px;
+	bottom: 10px;
+	right: 10px;
+	border: 1px solid black;
+	cursor: default;
+	overflow: hidden;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+#canvasVideo{
+	background: Black;	
+	-webkit-transform-origin: left top;
+	-webkit-transform: translateZ(0);
+	-moz-transform-origin: left top;
+	-moz-transform: translateZ(0);
+	-ms-transform-origin: left top;
+	-ms-transform: translateZ(0);
+	-o-transform-origin: left top;
+	-o-transform: translateZ(0);
+	transform-origin: left top;
+	transform: translateZ(0);
+}
+
+
+
+.videoButton {
+    position: relative;
+    display: inline-block;    
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+    position: relative;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.5);
+    height: 20px;
+    width: 20px; 
+}
+
+.videoCloseButton {
+    position: relative;
+    display: inline-block;    
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+    position: relative;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.7);
+    height: 20px;
+    width: 20px; 
+}
+
+.videoButton:hover {
+    color: rgba(255,255,255, 0.9);
+}
+
+
+.videoButton-icon {
+  position: absolute;
+  font-size: 10px;
+  text-align: center;
+  vertical-align : middle !important;
+  line-height: 6px;
+  width: 100%;
+
+}
+
+.videoButton-icon:hover {
+   /*font-size: 20px;*/
+   color: rgba(255,255,255, 1);
+}
+
+.back {
+    position: absolute;
+    border-radius: 30px;
+    -webkit-transform: translateX(15px,10px);
+    transform: translate(15px,10px); 
+    background : rgba(0,0,0, 0.6); 
+    width: 40px;
+    height: 90px;
+    z-index: 6;
+}
+
+/*.back:hover {
+    background : rgba(0,0,0, 0.8);
+}*/
+
+.videoMoveUpButton {
+  -webkit-transform: translateX(0px,5px);
+  transform: translate(0px,5px); 
+   z-index: 99;
+}
+
+.videoMoveleftButton {
+  -webkit-transform: translate(-10px,-25px);
+  transform: translate(-10px,-25px); 
+  z-index: 99;
+}
+
+.videoMoverigthButton {
+  -webkit-transform: translate(10px,-5px);
+  transform: translate(10px,-5px); 
+  z-index: 99;
+}
+
+.videoMovedownButton {
+  -webkit-transform: translate(0px,-35px);
+  transform: translate(0px,-35px); 
+  z-index: 99;
+}
+
+.videoZoomButton-icon {
+  position: absolute;
+  font-size: 15px;
+  text-align: center;
+  line-height: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  width: 100%; }
+
+.videoZoomButton-icon:hover {
+   /*font-size: 20px;*/
+   color: rgba(255,255,255, 1);
+}
+
+.videoMoveZoomInButton {
+  -webkit-transform: translate(0px,-35px);
+  transform: translate(0px,-35px); 
+  z-index: 99;
+}
+
+.videoMoveZoomOutButton {
+  -webkit-transform: translate(0px,-35px);
+  transform: translate(0px,-35px); 
+  z-index: 99;
+}
+
+.videohideButton {
+    right: 3px;
+    top: 5px;
+    position: absolute;
+}
+
+.showButton-icon {
+  position: absolute;
+  font-size: 20px;
+  text-align: center;
+  line-height: 24px;
+  width: 100%; }
+
+.showScreenButton {
+    position: absolute !important;
+    left : 8px;
+    top : 25px;
+}
+
+.showHideButton {
+    display: inline-block;
+    position: relative;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+    position: relative;
+    -webkit-user-drag: none;
+    font-weight: bold;
+    height: 32px;
+    width: 32px; 
+}
+
+.showHideLabel {
+    position: relative !important; 
+    top : 45px;
+}
+
+.no-highlighting {
+    user-select: none; -ms-user-select: none; -khtml-user-select: none; -o-user-select: none; -moz-user-select: -moz-none; -moz-user-select: none; -webkit-user-select: none;
+}
