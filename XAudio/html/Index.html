@@ -24,9 +24,9 @@
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     var context = new AudioContext();
 
-    //var audioFileUrl = "/res/pcm-stereo.wav";
+    var audioFileUrl = "/res/pcm-stereo.wav";
     //var audioFileUrl = "/res/pcm-mono.wav";
-    var audioFileUrl = "/res/gate10.wav";
+    //var audioFileUrl = "/res/gate10.wav";
     var encodedBuffer = null;
     var encodedBufferOffset = 0;
     var reachedEndOfBuffer = false;
@@ -40,7 +40,7 @@
         if (encode == 'gsm')
             return gsmDecoder.decode(getEncodedBlocks());
         else //assuming it is lpcm
-            return getPcmBlocks();
+            return getPcmBlocks2(samplesRequested);
     };
 
 
@@ -87,21 +87,20 @@
         return encodedBlock;
     };
 
-    this.getPcmBlocks = function() {
+    this.getPcmBlocks = function (samplesRequested) {
         var conversionFact = Math.pow(2, wav.format.significantBitsPerSample - 1);
 
-        var int16Array = new Int16Array(encodedBuffer.buffer, encodedBufferOffset);
-
-        var decodedFloat = new Float32Array(3200 * 8);
+        var bitsPerSampleArray = wav.format.significantBitsPerSample == 16 ? new Int16Array(encodedBuffer.buffer, encodedBufferOffset) : new Int8Array(encodedBuffer.buffer, encodedBufferOffset);
+        // Each sample is the bitsPerSample per the channels
+        var decodedFloat = new Float32Array(samplesRequested * wav.format.channelsPerFrame /*3200 * 6*/);
 
         for (var i = 0; i < decodedFloat.length; i++) {
-            decodedFloat[i] = int16Array[i] / conversionFact;
-            encodedBufferOffset += int16Array.BYTES_PER_ELEMENT;
+            decodedFloat[i] = bitsPerSampleArray[i] / conversionFact;
+            encodedBufferOffset += bitsPerSampleArray.BYTES_PER_ELEMENT;
         }
 
         if (encodedBufferOffset >= this.encodedBuffer.length)
             reachedEndOfBuffer = true;
-
         return decodedFloat;
     };
 
