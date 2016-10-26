@@ -79,18 +79,12 @@
         play();
     }
 
-    this.getEncodedBlocks = function() {
-        var encodedBlockSize = 65 * 10;
+    this.getEncodedBlocks = function () {
+        var encodedBlock = this.encodedBuffer.slice(encodedBufferOffset, encodedBufferOffset + (65 * 10));
 
-        var buffer = new Uint8Array(encodedBlockSize);
-        for (var i = 0; i < encodedBlockSize; i++) {
-            buffer[i] = this.encodedBuffer[encodedBufferOffset++];
-        }
-
-        if (encodedBufferOffset >= this.encodedBuffer.length)
-            reachedEndOfBuffer = true;
-
-        return buffer;
+        encodedBufferOffset += encodedBlock.length;
+        reachedEndOfBuffer = encodedBufferOffset >= this.encodedBuffer.length;
+        return encodedBlock;
     };
 
     this.getPcmBlocks = function() {
