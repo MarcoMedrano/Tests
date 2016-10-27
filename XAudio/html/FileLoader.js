@@ -9,12 +9,10 @@
         
         // Decode asynchronously
         request.onload = function () {
-            var uint8Array = new Uint8Array(request.response);
-            console.info('received ' + uint8Array.length);
+            console.info('FileLoader: received ' + request.response.byteLength);
 
-             callback(uint8Array);
+             callback(request.response);
         }
-
         request.send();
     };
 

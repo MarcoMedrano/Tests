@@ -29,17 +29,12 @@
     //var audioFileUrl = "/res/pcm-mono.wav";
     //var audioFileUrl = "/res/gate10.wav";
 
-    //new FileLoader().load(audioFileUrl, play2);
     new FileLoader().load(audioFileUrl, function (buffer) {
-                                            var player = new AudioContextPlayer(buffer.buffer);
+                                            //var player = new AudioContextPlayer(buffer);
+                                            var player = new XAudioPlayer(buffer);
                                             player.play();
                                         }
                          );
-    //new FileLoader().load(audioFileUrl, function (buffer) {
-    //                                        var player = new XAudioPlayer(buffer);
-    //                                        player.play();
-    //                                    }
-    //                     );
 </script>
 
 Hola nena
