@@ -32,10 +32,12 @@
   <ItemGroup>
     <Compile Include="html\FileLoader.js" />
     <Compile Include="html\GsmDecoder.js" />
+    <Compile Include="html\AudioContextPlayer.js" />
     <Compile Include="html\libs\gsm.js" />
     <Compile Include="html\libs\resampler.js" />
     <Compile Include="html\libs\WaveParser.js" />
     <Compile Include="html\libs\XAudioServer.js" />
+    <Compile Include="html\XAudioPlayer.js" />
     <Compile Include="server.js" />
     <Content Include="html\Index.html" />
     <Content Include="html\res\GATE10.wav" />
