@@ -4,6 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <title></title>
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="all" />
+
     <script src="libs/resampler.js"></script>
     <script src="libs/XAudioServer.js"></script>
     <script src="libs/gsm.js"></script>
@@ -15,29 +17,53 @@
     <script src="AudioContextPlayer.js"></script>
 
 </head>
-<body>
+<body style="padding: 20px; font-family: 'Comic Sans MS'; font-size: 110%;">
+<br>
+<div>
+    <h2>Files</h2><br>
+    <input type='radio' name='file' value='/res/gsm-mono.wav' checked> /res/gsm-mono.wav<br>
+    <input type='radio' name='file' value='/res/pcm-mono.wav'> /res/pcm-mono.wav<br>
+    <input type='radio' name='file' value='/res/pcm-stereo.wav'> /res/pcm-stereo.wav<br>
+    <input type='radio' name='file' value='/res/pcm-stereo2.wav'> /res/pcm-stereo2.wav<br>
+    <input type='radio' name='file' value='/res/pcm-stereo3.wav'> /res/pcm-stereo3.wav<br>
+</div>
+<br><br>
+<div>
+    <h2>Players</h2><br>
+    <input type='radio' name='player' value='XAudio' checked> XAudio<br>
+    <input type='radio' name='player' value='AudioContext'> AudioContext<br>
+</div>
+<br><br>
+<button id='playstop' onclick="play()" type="button" autofocus="autofocus" style="padding: 5px; font-size: 140%;">►</button>
+    <!--»-->
 <script>
-    // Pretty good references:
-    // http://www.signalogic.com/index.pl?page=ms_waveform
-    // http://www.topherlee.com/software/pcm-tut-wavformat.html
-    // http://soundfile.sapp.org/doc/WaveFormat/
-    // http://blog.bjornroche.com/2013/05/the-abcs-of-pcm-uncompressed-digital.html
-    // 
-    
 
-    var audioFileUrl = "/res/pcm-stereo.wav";
-    //var audioFileUrl = "/res/pcm-mono.wav";
-    //var audioFileUrl = "/res/gate10.wav";
+    var playing = false;
+    var player = {};//Current player 
 
-    new FileLoader().load(audioFileUrl, function (buffer) {
-                                            //var player = new AudioContextPlayer(buffer);
-                                            var player = new XAudioPlayer(buffer);
-                                            player.play();
-                                        }
-                         );
+    function play() {
+
+        document.querySelector('button[id="playstop"]').innerText = !playing ? " ■ " : "►";
+
+        if (playing) {
+            player.stop();
+            playing = false;
+
+            return;
+        }
+        var audioFileUrl = document.querySelector('input[name="file"]:checked').value;
+
+        new FileLoader().load(audioFileUrl, function(buffer) {
+            player = document.querySelector('input[name="player"]:checked').value == 'XAudio' ? new XAudioPlayer(buffer) : new AudioContextPlayer(buffer);
+            playing = true;
+
+            player.play();
+        }
+        );
+    };
 </script>
 
-Hola nena
+
 
 </body>
 </html>

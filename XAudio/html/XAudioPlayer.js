@@ -1,6 +1,14 @@
-﻿function XAudioPlayer(buffer) {
+﻿// Pretty good references:
+// http://www.signalogic.com/index.pl?page=ms_waveform
+// http://www.topherlee.com/software/pcm-tut-wavformat.html
+// http://soundfile.sapp.org/doc/WaveFormat/
+// http://blog.bjornroche.com/2013/05/the-abcs-of-pcm-uncompressed-digital.html
+// 
+
+function XAudioPlayer(buffer) {
     
     var self = this;
+    var intervalId = 0;
     var encodedBufferOffset = 0;
     var reachedEndOfBuffer = false;
     var wav = new WaveParser(new Uint8Array(buffer));
@@ -12,12 +20,12 @@
 
     var getSamplesCallback = function (samplesRequested) {
         if (wav.format.formatID == 'gsm')
-            return gsmDecoder.decode(new Uint8Array(self.getEncodedBlocks()));
+            return gsmDecoder.decode(new Uint8Array(getEncodedBlocks()));
         else //assuming it is lpcm
-            return self.getPcmBlocks(samplesRequested);
+            return getPcmBlocks(samplesRequested);
     };
     
-    self.getEncodedBlocks = function () {
+    var getEncodedBlocks = function () {
         var encodedBlock = encodedBuffer.slice(encodedBufferOffset, encodedBufferOffset + (65 * 10));
         
         encodedBufferOffset += encodedBlock.byteLength;
@@ -25,7 +33,7 @@
         return encodedBlock;
     };
     
-    self.getPcmBlocks = function (samplesRequested) {
+    var getPcmBlocks = function (samplesRequested) {
         //-1 ONLY FOR SIGNED PCM WAVE that said for bitsPerAample above 16bit. 8-bit format are always signed pcm waves
         var conversionFact = Math.pow(2, wav.format.significantBitsPerSample - (wav.format.significantBitsPerSample == 8 ? 0 : 1));
         
@@ -44,7 +52,7 @@
     };
 
     self.play = function() {
-       var intervalId = setInterval(function () {
+       intervalId = setInterval(function () {
             if (reachedEndOfBuffer) {
                 clearInterval(intervalId);
                 return;
@@ -52,6 +60,10 @@
             
             xAudioServer.executeCallback();
         }, 200);
+    };
+    
+    self.stop = function () {
+        clearInterval(intervalId);
     };
 
     var xAudioServer = new XAudioServer(

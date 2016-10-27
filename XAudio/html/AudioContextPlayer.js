@@ -3,9 +3,9 @@
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     var self = this;
     var context = new AudioContext();
+    var source = context.createBufferSource(); // creates a sound source
 
     var playWithAudioContext = function (buffer) {
-        var source = context.createBufferSource(); // creates a sound source
         //var rightChannel = buffer.getChannelData(0); //encoded on Float32
         //var left = buffer.getChannelData(1);
         source.buffer = buffer; // tell the source which sound to play
@@ -15,5 +15,9 @@
 
     self.play = function () {
         context.decodeAudioData(buffer, playWithAudioContext, function (e) { console.error(e); });
+    };
+
+    self.stop = function() {
+        source.stop();
     };
 }
