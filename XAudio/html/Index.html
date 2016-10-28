@@ -54,13 +54,18 @@
         var audioFileUrl = document.querySelector('input[name="file"]:checked').value;
 
         new FileLoader().load(audioFileUrl, function(buffer) {
-            player = document.querySelector('input[name="player"]:checked').value == 'XAudio' ? new XAudioPlayer(buffer) : new AudioContextPlayer(buffer);
+            player = document.querySelector('input[name="player"]:checked').value == 'XAudio' ? new XAudioPlayer(buffer, onEnded) : new AudioContextPlayer(buffer, onEnded);
             playing = true;
 
             player.play();
         }
         );
     };
+
+    function onEnded() {
+        playing = false;
+        document.querySelector('button[id="playstop"]').innerText = "►";
+    }
 </script>
 
 

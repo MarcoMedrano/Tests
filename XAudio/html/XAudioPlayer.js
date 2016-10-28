@@ -5,7 +5,7 @@
 // http://blog.bjornroche.com/2013/05/the-abcs-of-pcm-uncompressed-digital.html
 // 
 
-function XAudioPlayer(buffer) {
+function XAudioPlayer(buffer, onEndedCallback) {
     
     var self = this;
     var intervalId = 0;
@@ -55,6 +55,7 @@ function XAudioPlayer(buffer) {
        intervalId = setInterval(function () {
             if (reachedEndOfBuffer) {
                 clearInterval(intervalId);
+                if (onEndedCallback) onEndedCallback();
                 return;
             }
             
