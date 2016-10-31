@@ -1,4 +1,6 @@
-﻿function AudioContextPlayer(buffer, onEndedCallback) {
+﻿//https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createMediaStreamSource
+
+function AudioContextPlayer(buffer, onEndedCallback) {
 
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     var self = this;
@@ -7,7 +9,6 @@
     if (onEndedCallback) source.onended = onEndedCallback;
 
     var playWithAudioContext = function (buffer) {
-        
         //var rightChannel = buffer.getChannelData(0); //encoded on Float32
         //var left = buffer.getChannelData(1);
         source.buffer = buffer; // tell the source which sound to play
@@ -21,5 +22,9 @@
 
     self.stop = function() {
         source.stop();
+    };
+
+    self.speed = function(speed) {
+        source.playbackRate.value = speed;
     };
 }

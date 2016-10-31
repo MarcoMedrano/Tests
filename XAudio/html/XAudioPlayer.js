@@ -3,7 +3,7 @@
 // http://www.topherlee.com/software/pcm-tut-wavformat.html
 // http://soundfile.sapp.org/doc/WaveFormat/
 // http://blog.bjornroche.com/2013/05/the-abcs-of-pcm-uncompressed-digital.html
-// 
+// http://stackoverflow.com/questions/15087668/how-to-convert-pcm-samples-in-byte-array-as-floating-point-numbers-in-the-range
 
 function XAudioPlayer(buffer, onEndedCallback) {
     
@@ -66,9 +66,13 @@ function XAudioPlayer(buffer, onEndedCallback) {
     self.stop = function () {
         clearInterval(intervalId);
     };
+    
+    self.speed = function (speed) {
+        
+    };
 
     var xAudioServer = new XAudioServer(
-        wav.format.channelsPerFrame,
+            wav.format.channelsPerFrame,
             wav.format.sampleRate,
             wav.format.sampleRate / 4,
             wav.format.sampleRate / 2,

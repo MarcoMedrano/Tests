@@ -21,29 +21,38 @@
 <br>
 <div>
     <h2>Files</h2><br>
-    <input type='radio' name='file' value='/res/gsm-mono.wav' checked> /res/gsm-mono.wav<br>
-    <input type='radio' name='file' value='/res/pcm-mono.wav'> /res/pcm-mono.wav<br>
-    <input type='radio' name='file' value='/res/pcm-stereo.wav'> /res/pcm-stereo.wav<br>
-    <input type='radio' name='file' value='/res/pcm-stereo2.wav'> /res/pcm-stereo2.wav<br>
-    <input type='radio' name='file' value='/res/pcm-stereo3.wav'> /res/pcm-stereo3.wav<br>
+    <label><input type='radio' name='file' value='/res/gsm-mono.wav' checked>/res/gsm-mono.wav</label><br>
+    <label><input type='radio' name='file' value='/res/pcm-mono.wav'> /res/pcm-mono.wav</label><br>
+    <label><input type='radio' name='file' value='/res/pcm-stereo.wav'> /res/pcm-stereo.wav</label><br>
+    <label><input type='radio' name='file' value='/res/pcm-stereo2.wav'> /res/pcm-stereo2.wav</label><br>
+    <label><input type='radio' name='file' value='/res/pcm-stereo3.wav'> /res/pcm-stereo3.wav</label><br>
 </div>
 <br><br>
 <div>
     <h2>Players</h2><br>
-    <input type='radio' name='player' value='XAudio' checked> XAudio<br>
-    <input type='radio' name='player' value='AudioContext'> AudioContext<br>
+    <label><input type='radio' name='player' value='XAudio' checked> XAudio</label><br>
+    <label><input type='radio' name='player' value='AudioContext'> AudioContext</label><br>
 </div>
 <br><br>
 <button id='playstop' onclick="play()" type="button" autofocus="autofocus" style="padding: 5px; font-size: 140%;">►</button>
-    <!--»-->
+<button id='speedDown' onclick="speedDown()" type="button" style="padding: 5px; font-size: 140%;">«</button>
+<span id='speedValue'>100%</span>
+    <!--<input class="playback-rate-control" type="range" min="0.25" max="3" step="0.25" value="1">-->
+<button id='speedUp' onclick="speedUp()" type="button" style="padding: 5px; font-size: 140%;">»</button>
+
 <script>
 
     var playing = false;
     var player = {};//Current player 
+    var speed = 1;
+
+    var playStopButton = document.querySelector('button[id="playstop"]');
+    var speedUpButton = document.querySelector('button[id="speedUp"]');
+    var speedValueSpan = document.querySelector('span[id="speedValue"]');
+    var speedDownButton = document.querySelector('button[id="speedDown"]');
 
     function play() {
-
-        document.querySelector('button[id="playstop"]').innerText = !playing ? " ■ " : "►";
+        playStopButton.innerText = !playing ? " ■ " : "►";
 
         if (playing) {
             player.stop();
@@ -57,6 +66,7 @@
             player = document.querySelector('input[name="player"]:checked').value == 'XAudio' ? new XAudioPlayer(buffer, onEnded) : new AudioContextPlayer(buffer, onEnded);
             playing = true;
 
+            player.speed(speed);
             player.play();
         }
         );
@@ -64,7 +74,17 @@
 
     function onEnded() {
         playing = false;
-        document.querySelector('button[id="playstop"]').innerText = "►";
+        playStopButton.innerText = "►";
+    }
+
+    function speedUp() {
+        player.speed(speed += 0.25);
+        speedValueSpan.innerHTML = (speed * 100) + "%";
+    }
+
+    function speedDown() {
+        player.speed(speed -= 0.25);
+        speedValueSpan.innerHTML = (speed * 100) + "%";
     }
 </script>
 
