@@ -8,6 +8,7 @@
 function XAudioPlayer(buffer, onEndedCallback) {
     
     var self = this;
+    var speed = 1;
     var intervalId = 0;
     var encodedBufferOffset = 0;
     var reachedEndOfBuffer = false;
@@ -15,14 +16,24 @@ function XAudioPlayer(buffer, onEndedCallback) {
     wav.ReadHeader();
     var encodedBuffer = buffer.slice(wav.GetHeaderSize(), buffer.byteLength);
     var gsmDecoder = new GsmDecoder();
+    var phaseVocoderProcessor = new PhaseVocoderProcessor();
 
     var failureCallback = function(e) {console.error("XAudioPlayer: " + e);}
 
     var getSamplesCallback = function (samplesRequested) {
-        if (wav.format.formatID == 'gsm')
-            return gsmDecoder.decode(new Uint8Array(getEncodedBlocks()));
+
+        var decodedFloat;
+
+        if (wav.format.formatID == 'gsm') 
+            decodedFloat = gsmDecoder.decode(new Uint8Array(getEncodedBlocks()));
         else //assuming it is lpcm
-            return getPcmBlocks(samplesRequested);
+            decodedFloat = getPcmBlocks(samplesRequested);
+
+        if (speed != 1) {
+            decodedFloat = phaseVocoderProcessor.process(decodedFloat, samplesRequested);
+        }
+
+        return decodedFloat;
     };
     
     var getEncodedBlocks = function () {
@@ -67,8 +78,8 @@ function XAudioPlayer(buffer, onEndedCallback) {
         clearInterval(intervalId);
     };
     
-    self.speed = function (speed) {
-        
+    self.speed = function (speedRequested) {
+        speed = speedRequested;
     };
 
     var xAudioServer = new XAudioServer(
