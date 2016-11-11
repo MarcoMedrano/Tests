@@ -5,18 +5,21 @@
 // http://blog.bjornroche.com/2013/05/the-abcs-of-pcm-uncompressed-digital.html
 // http://stackoverflow.com/questions/15087668/how-to-convert-pcm-samples-in-byte-array-as-floating-point-numbers-in-the-range
 
-function XAudioPlayer(buffer, onEndedCallback) {
+function XAudioPlayer(buffer, _onEndedCallback) {
     
     var self = this;
     var speed = 1;
     var intervalId = 0;
+    var encodedBuffer = null;
     var encodedBufferOffset = 0;
     var reachedEndOfBuffer = false;
-    var wav = new WaveParser(new Uint8Array(buffer));
-    wav.ReadHeader();
-    var encodedBuffer = buffer.slice(wav.GetHeaderSize(), buffer.byteLength);
+    var wav = null;
+    var xAudioServer = null;
+    
     var gsmDecoder = new GsmDecoder();
     var phaseVocoderProcessor = new PhaseVocoderProcessor();
+
+    var onEndedCallback = null;
 
     var failureCallback = function(e) {console.error("XAudioPlayer: " + e);}
 
@@ -45,7 +48,7 @@ function XAudioPlayer(buffer, onEndedCallback) {
     };
     
     var getPcmBlocks = function (samplesRequested) {
-        //-1 ONLY FOR SIGNED PCM WAVE that said for bitsPerAample above 16bit. 8-bit format are always signed pcm waves
+        //-1 ONLY FOR SIGNED PCM WAVE that said for bitsPerSample above 16bit. 8-bit format are always unsigned pcm waves
         var conversionFact = Math.pow(2, wav.format.significantBitsPerSample - (wav.format.significantBitsPerSample == 8 ? 0 : 1));
         
         var bitsPerSampleArray = wav.format.significantBitsPerSample == 8 ? new Uint8Array(encodedBuffer, encodedBufferOffset) : new Int16Array(encodedBuffer, encodedBufferOffset);
@@ -82,8 +85,15 @@ function XAudioPlayer(buffer, onEndedCallback) {
         speed = speedRequested;
         phaseVocoderProcessor.speed(speedRequested);
     };
-
-    var xAudioServer = new XAudioServer(
+    
+    self.init = function (buffer, _onEndedCallback) {
+        
+        onEndedCallback = _onEndedCallback;
+        
+        wav = new WaveParser(new Uint8Array(buffer));
+        wav.ReadHeader();
+        encodedBuffer = buffer.slice(wav.GetHeaderSize(), buffer.byteLength);
+        xAudioServer = new XAudioServer(
             wav.format.channelsPerFrame,
             wav.format.sampleRate,
             wav.format.sampleRate / 4,
@@ -91,4 +101,7 @@ function XAudioPlayer(buffer, onEndedCallback) {
             getSamplesCallback,
             1,
             failureCallback);
+    }
+
+    if (buffer && _onEndedCallback) self.init(buffer, _onEndedCallback);
 }

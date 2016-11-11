@@ -44,17 +44,20 @@
 <span id='speedValue'>100%</span>
     <!--<input class="playback-rate-control" type="range" min="0.25" max="3" step="0.25" value="1">-->
 <button id='speedUp' onclick="speedUp()" type="button" style="padding: 5px; font-size: 140%;">»</button>
-
+<h4>Time:</h4><span id='elapsedTime'>0</span>s
 <script>
 
     var playing = false;
-    var player = {};//Current player 
+    var player = null;//Current player 
     var speed = 1;
+    var elapsedTimeIntervalId = -1;
 
     var playStopButton = document.querySelector('button[id="playstop"]');
     var speedUpButton = document.querySelector('button[id="speedUp"]');
     var speedValueSpan = document.querySelector('span[id="speedValue"]');
     var speedDownButton = document.querySelector('button[id="speedDown"]');
+    var elapsedTimeSpan = document.querySelector('span[id="elapsedTime"]');
+
 
     function play() {
         playStopButton.innerText = !playing ? " ■ " : "►";
@@ -62,6 +65,7 @@
         if (playing) {
             player.stop();
             playing = false;
+            clearInterval(elapsedTimeIntervalId);
 
             return;
         }
@@ -73,23 +77,33 @@
 
             player.speed(speed);
             player.play();
-        }
+            startRunningElapsedTime();
+            }
         );
     };
 
     function onEnded() {
         playing = false;
         playStopButton.innerText = "►";
+        clearInterval(elapsedTimeIntervalId);
     }
 
     function speedUp() {
-        player.speed(speed += 0.25);
+        speed += 0.25;
+        if(player) player.speed(speed);
         speedValueSpan.innerHTML = (speed * 100) + "%";
     }
 
     function speedDown() {
-        player.speed(speed -= 0.25);
+        speed -= 0.25;
+        if (player) player.speed(speed);
         speedValueSpan.innerHTML = (speed * 100) + "%";
+    }
+
+    function startRunningElapsedTime() {
+        clearInterval(elapsedTimeIntervalId);
+        elapsedTimeSpan.innerHTML = 0;
+        elapsedTimeIntervalId = setInterval(function () { elapsedTimeSpan.innerHTML++; }, 1000);
     }
 </script>
 

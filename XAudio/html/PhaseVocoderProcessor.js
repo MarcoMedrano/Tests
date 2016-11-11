@@ -33,7 +33,7 @@
         
         if (sampleCounter == samplesRequested)
             return or;
-        //_position = 0;
+
         do {
             adjustIfNewAlpha();
             var bufR = ir.subarray(_position, _position + _frameSize);
