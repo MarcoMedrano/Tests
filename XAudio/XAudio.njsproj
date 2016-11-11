@@ -31,9 +31,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="html\FileLoader.js" />
+    <Compile Include="html\Float32List.js" />
     <Compile Include="html\GsmDecoder.js" />
     <Compile Include="html\AudioContextPlayer.js" />
     <Compile Include="html\libs\cbuffer.js" />
+    <Compile Include="html\libs\dsp.js" />
     <Compile Include="html\libs\gsm.js" />
     <Compile Include="html\libs\PV_fast_5.js" />
     <Compile Include="html\libs\resampler.js" />

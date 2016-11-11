@@ -80,6 +80,7 @@ function XAudioPlayer(buffer, onEndedCallback) {
     
     self.speed = function (speedRequested) {
         speed = speedRequested;
+        phaseVocoderProcessor.speed(speedRequested);
     };
 
     var xAudioServer = new XAudioServer(
