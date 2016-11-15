@@ -40,6 +40,7 @@
 
             /* LEFT */
             _pvR.process(bufR, _midBufR);
+            console.warn(_midBufR);
             for (var i = sampleCounter; _midBufR.size > 0 && i < samplesRequested; i++) {
                 or[i] = _midBufR.shift();
             }

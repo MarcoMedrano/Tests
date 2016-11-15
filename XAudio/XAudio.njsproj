@@ -41,6 +41,7 @@
     <Compile Include="html\libs\resampler.js" />
     <Compile Include="html\libs\WaveParser.js" />
     <Compile Include="html\libs\XAudioServer.js" />
+    <Compile Include="html\PhaseVocoderProcessor2.js" />
     <Compile Include="html\PhaseVocoderProcessor.js" />
     <Compile Include="html\XAudioPlayer.js" />
     <Compile Include="server.js" />

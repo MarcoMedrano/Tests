@@ -1,6 +1,6 @@
 ﻿function Float32List (initialSize) {
     var self = this;
-    var internalArray = new Float32Array(initialSize || 1024);
+    var internalArray = new Float32Array(initialSize || 1024*256);
 
     self.length = 0;
     
