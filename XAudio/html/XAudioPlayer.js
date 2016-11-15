@@ -15,7 +15,9 @@ function XAudioPlayer(buffer, _onEndedCallback) {
     var reachedEndOfBuffer = false;
     var wav = null;
     var xAudioServer = null;
-    
+
+    var rawBufferReader = null;
+    var pcmReader = null;
     var gsmDecoder = new GsmDecoder();
     var phaseVocoderProcessor = new PhaseVocoderProcessor2();
 
@@ -27,11 +29,12 @@ function XAudioPlayer(buffer, _onEndedCallback) {
 
         var decodedFloat;
 
-        if (wav.format.formatID == 'gsm') 
+        if (wav.format.formatID == 'gsm')
             decodedFloat = gsmDecoder.decode(new Uint8Array(getEncodedBlocks()));
         else //assuming it is lpcm
-            decodedFloat = getPcmBlocks(samplesRequested*4);
-
+        //decodedFloat = getPcmBlocks(samplesRequested*4/4);
+            decodedFloat = pcmReader.read(samplesRequested);
+        reachedEndOfBuffer = pcmReader.reachedEnd;
         if (speed != 1) {
             decodedFloat = phaseVocoderProcessor.process(decodedFloat, samplesRequested);
         }
@@ -93,6 +96,9 @@ function XAudioPlayer(buffer, _onEndedCallback) {
         wav = new WaveParser(new Uint8Array(buffer));
         wav.ReadHeader();
         encodedBuffer = buffer.slice(wav.GetHeaderSize(), buffer.byteLength);
+        rawBufferReader = new RawBufferReader(encodedBuffer);
+        pcmReader = new PcmReader(rawBufferReader, wav.format.significantBitsPerSample, wav.format.channelsPerFrame);
+
         xAudioServer = new XAudioServer(
             wav.format.channelsPerFrame,
             wav.format.sampleRate,
