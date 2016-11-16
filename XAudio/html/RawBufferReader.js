@@ -1,16 +1,15 @@
-﻿function RawBufferReader(encodedBuffer) {
+﻿function RawBufferReader(rawBuffer) {
 
     var self = this;
     var bufferOffset = 0;
     self.reachedEnd = false;
 
-    self.read = function (_size) {
-        var size = _size || 65 * 10;
-        var encodedBlock = encodedBuffer.slice(bufferOffset, bufferOffset + size);
+    self.read = function (size) {
+        var rawBlock = rawBuffer.slice(bufferOffset, bufferOffset + size);
             
-        bufferOffset += encodedBlock.byteLength;
-        self.reachedEnd = bufferOffset >= encodedBuffer.byteLength;
+        bufferOffset += rawBlock.byteLength;
+        self.reachedEnd = bufferOffset >= rawBuffer.byteLength;
         
-        return encodedBlock;
+        return rawBlock;
     }
 }

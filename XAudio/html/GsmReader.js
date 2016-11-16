@@ -25,6 +25,7 @@
         
         self.reachedEnd = source.reachedEnd;
         var rawBuffer = Module.HEAPU8.buffer.slice(buf, buf + len2);
+        return rawBuffer;
         var int16Array = new Int16Array(rawBuffer);
 
         console.debug("GsmReader:decodedBuffer length " + int16Array.length);
