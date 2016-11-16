@@ -1,5 +1,6 @@
-﻿function PcmReader(source, significantBitsPerSample, channelsPerFrame) {
+﻿function PcmReader(source, _significantBitsPerSample, channelsPerFrame) {
     var self = this;
+    var significantBitsPerSample = _significantBitsPerSample || 16;
     var bytesPerSample = significantBitsPerSample / 8;
     var isOneBytePerSample = significantBitsPerSample == 8;
     //-1 ONLY FOR SIGNED PCM WAVE that said for bitsPerSample above 16bit. 8-bit format are always unsigned pcm waves

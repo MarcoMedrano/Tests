@@ -18,6 +18,8 @@ function XAudioPlayer(buffer, _onEndedCallback) {
 
     var rawBufferReader = null;
     var pcmReader = null;
+    var gsmReader = null;
+
     var gsmDecoder = new GsmDecoder();
     var phaseVocoderProcessor = new PhaseVocoderProcessor2();
 
@@ -30,7 +32,8 @@ function XAudioPlayer(buffer, _onEndedCallback) {
         var decodedFloat;
 
         if (wav.format.formatID == 'gsm')
-            decodedFloat = gsmDecoder.decode(new Uint8Array(getEncodedBlocks()));
+        //decodedFloat = gsmDecoder.decode(new Uint8Array(getEncodedBlocks()));
+            decodedFloat = gsmReader.read(samplesRequested);
         else //assuming it is lpcm
         //decodedFloat = getPcmBlocks(samplesRequested*4/4);
             decodedFloat = pcmReader.read(samplesRequested);
@@ -98,6 +101,8 @@ function XAudioPlayer(buffer, _onEndedCallback) {
         encodedBuffer = buffer.slice(wav.GetHeaderSize(), buffer.byteLength);
         rawBufferReader = new RawBufferReader(encodedBuffer);
         pcmReader = new PcmReader(rawBufferReader, wav.format.significantBitsPerSample, wav.format.channelsPerFrame);
+        //gsmReader = new PcmReader(new GsmReader(rawBufferReader), wav.format.significantBitsPerSample, wav.format.channelsPerFrame);
+        gsmReader = new GsmReader(rawBufferReader);
 
         xAudioServer = new XAudioServer(
             wav.format.channelsPerFrame,
@@ -108,8 +113,8 @@ function XAudioPlayer(buffer, _onEndedCallback) {
             1,
             failureCallback);
         
-        var context = new AudioContext();
-        context.decodeAudioData(buffer, function(buffer) { audioBuffer2 = buffer; }, function (e) { console.error(e); });
+        //var context = new AudioContext();
+        //context.decodeAudioData(buffer, function(buffer) { audioBuffer2 = buffer; }, function (e) { console.error(e); });
     }
     
     var audioBufferOffset2 = 0;
