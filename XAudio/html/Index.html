@@ -93,13 +93,13 @@
     }
 
     function speedUp() {
-        speed += 0.25;
+        speed += 0.20;
         if(player) player.speed(speed);
         speedValueSpan.innerHTML = (speed * 100) + "%";
     }
 
     function speedDown() {
-        speed -= 0.25;
+        speed -= 0.20;
         if (player) player.speed(speed);
         speedValueSpan.innerHTML = (speed * 100) + "%";
     }

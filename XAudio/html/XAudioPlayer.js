@@ -10,17 +10,16 @@ function XAudioPlayer(buffer, _onEndedCallback) {
     var self = this;
     var speed = 1;
     var intervalId = 0;
-    var encodedBuffer = null;
-    var encodedBufferOffset = 0;
-    var reachedEndOfBuffer = false;
+    var reachedEnd = false;
+
     var wav = null;
     var xAudioServer = null;
 
     var rawBufferReader = null;
     var pcmReader = null;
     var gsmReader = null;
+    var currentReader = null;
 
-    var gsmDecoder = new GsmDecoder();
     var phaseVocoderProcessor = new PhaseVocoderProcessor2();
 
     var onEndedCallback = null;
@@ -29,15 +28,9 @@ function XAudioPlayer(buffer, _onEndedCallback) {
 
     var getSamplesCallback = function (samplesRequested) {
 
-        var decodedFloat;
+        var decodedFloat =  currentReader.read(samplesRequested * (speed != 1 ?  4 : 1));
+        reachedEnd = currentReader.reachedEnd;
 
-        if (wav.format.formatID == 'gsm')
-        //decodedFloat = gsmDecoder.decode(new Uint8Array(getEncodedBlocks()));
-            decodedFloat = gsmReader.read(samplesRequested);
-        else //assuming it is lpcm
-        //decodedFloat = getPcmBlocks(samplesRequested*4/4);
-            decodedFloat = pcmReader.read(samplesRequested);
-        reachedEndOfBuffer = pcmReader.reachedEnd;
         if (speed != 1) {
             decodedFloat = phaseVocoderProcessor.process(decodedFloat, samplesRequested);
         }
@@ -47,7 +40,7 @@ function XAudioPlayer(buffer, _onEndedCallback) {
 
     self.play = function() {
        intervalId = setInterval(function () {
-            if (reachedEndOfBuffer) {
+            if (reachedEnd) {
                 clearInterval(intervalId);
                 if (onEndedCallback) onEndedCallback();
                 return;
@@ -72,11 +65,16 @@ function XAudioPlayer(buffer, _onEndedCallback) {
         
         wav = new WaveParser(new Uint8Array(buffer));
         wav.ReadHeader();
-        encodedBuffer = buffer.slice(wav.GetHeaderSize(), buffer.byteLength);
-        rawBufferReader = new RawBufferReader(encodedBuffer);
+        var rawData = buffer.slice(wav.GetHeaderSize(), buffer.byteLength);
+        
+        rawBufferReader = new RawBufferReader(rawData);
         pcmReader = new PcmReader(rawBufferReader, wav.format.significantBitsPerSample, wav.format.channelsPerFrame);
         gsmReader = new PcmReader(new GsmReader(rawBufferReader, wav.format.blockAlign, wav.format.samplesPerBlock), wav.format.significantBitsPerSample, wav.format.channelsPerFrame);
         //gsmReader = new GsmReader(rawBufferReader, wav.format.blockAlign, wav.format.samplesPerBlock);
+        if (wav.format.formatID == 'gsm')
+            currentReader = gsmReader;
+        else 
+            currentReader = pcmReader;
 
         xAudioServer = new XAudioServer(
             wav.format.channelsPerFrame,
@@ -99,7 +97,7 @@ function XAudioPlayer(buffer, _onEndedCallback) {
         audioBufferOffset2 += samplesRequested;
         
         if (audioBufferOffset2 >= audioBuffer2.length)
-            reachedEndOfBuffer = true;
+            reachedEnd = true;
 
         return samples;
     };
