@@ -20,7 +20,7 @@ function XAudioPlayer(buffer, _onEndedCallback) {
     var gsmReader = null;
     var currentReader = null;
 
-    var phaseVocoderProcessor = new PhaseVocoderProcessor2();
+    var phaseVocoderProcessor = null;
 
     var onEndedCallback = null;
 
@@ -31,9 +31,9 @@ function XAudioPlayer(buffer, _onEndedCallback) {
         var decodedFloat =  currentReader.read(samplesRequested * (speed != 1 ?  2 : 1));
         reachedEnd = currentReader.reachedEnd;
 
-        if (speed != 1) {
-            decodedFloat = phaseVocoderProcessor.process(decodedFloat, samplesRequested);
-        }
+        //if (speed != 1) {
+        //    decodedFloat = phaseVocoderProcessor.process(decodedFloat, samplesRequested);
+        //}
 
         return decodedFloat;
     };
@@ -56,6 +56,17 @@ function XAudioPlayer(buffer, _onEndedCallback) {
     
     self.speed = function (speedRequested) {
         speed = speedRequested;
+        
+        if (speed == 1) {
+            if (wav.format.formatID == 'gsm')
+                currentReader = gsmReader;
+            else
+                currentReader = pcmReader;
+        } 
+        else {
+            currentReader = phaseVocoderProcessor;
+        }
+
         phaseVocoderProcessor.speed(speedRequested);
     };
     
@@ -75,6 +86,8 @@ function XAudioPlayer(buffer, _onEndedCallback) {
             currentReader = gsmReader;
         else 
             currentReader = pcmReader;
+
+        phaseVocoderProcessor = new PhaseVocoderReader(currentReader);
 
         xAudioServer = new XAudioServer(
             wav.format.channelsPerFrame,

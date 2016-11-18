@@ -7,17 +7,17 @@
 
     //-1 ONLY FOR SIGNED PCM WAVE that said for bitsPerSample above 16bit. 8-bit format are always unsigned pcm waves
     var conversionFact = Math.pow(2, significantBitsPerSample - (isOneBytePerSample ? 0 : 1));
-    console.debug('PcmReader:conversionFact : ' + conversionFact);
+    console.log('PcmReader:conversionFact : ' + conversionFact);
     self.reachedEnd = false;
 
     self.read = function (samplesRequested) {
-        console.debug('PcmReader:samplesRequested : ' + samplesRequested);
+        console.log('PcmReader:samplesRequested : ' + samplesRequested);
 
         var rawBuffer = source.read(samplesRequested * channelsPerFrame * bytesPerSample);
-        console.debug('PcmReader:bytesGotten : ' + rawBuffer.byteLength);
+        console.log('PcmReader:bytesGotten : ' + rawBuffer.byteLength);
 
         var bitsPerSampleArray = isOneBytePerSample ? new Uint8Array(rawBuffer) : new Int16Array(rawBuffer);
-        console.debug('PcmReader:samplesToReturn : ' + bitsPerSampleArray.length);
+        console.log('PcmReader:samplesToReturn : ' + bitsPerSampleArray.length);
 
         // Each sample is the bitsPerSample * channels but based on what the source returns that might be smaller or longer :...
         var decodedFloat = new Float32Array(bitsPerSampleArray.length);
