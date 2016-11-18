@@ -28,7 +28,7 @@ function XAudioPlayer(buffer, _onEndedCallback) {
 
     var getSamplesCallback = function (samplesRequested) {
 
-        var decodedFloat =  currentReader.read(samplesRequested * (speed != 1 ?  4 : 1));
+        var decodedFloat =  currentReader.read(samplesRequested * (speed != 1 ?  2 : 1));
         reachedEnd = currentReader.reachedEnd;
 
         if (speed != 1) {

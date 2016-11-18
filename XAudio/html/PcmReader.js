@@ -1,4 +1,5 @@
 ﻿function PcmReader(source, _significantBitsPerSample, channelsPerFrame) {
+
     var self = this;
     var significantBitsPerSample = _significantBitsPerSample || 16;
     var isOneBytePerSample = significantBitsPerSample == 8;

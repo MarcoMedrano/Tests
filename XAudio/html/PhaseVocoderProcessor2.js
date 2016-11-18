@@ -1,15 +1,16 @@
-﻿function PhaseVocoderProcessor2(frameSize) {
+﻿function PhaseVocoderProcessor2(_frameSize, _sampleRate) {
 
     var self = this;
-    var _frameSize = frameSize || 4096/8;
-    var _pvL = new PhaseVocoder(_frameSize, 44100); _pvL.init();
-    var _pvR = new PhaseVocoder(_frameSize, 44100); _pvR.init();
+    var frameSize = _frameSize || 4096 / 8;
+    var sampleRate = _sampleRate || 44100;
+    var _pvL = new PhaseVocoder(frameSize, sampleRate); _pvL.init();
+    var _pvR = new PhaseVocoder(frameSize, sampleRate); _pvR.init();
     var _buffer;
     var _position = 0;
     var _newAlpha = 1;
     
-    var _midBufL = new CBuffer(Math.round(_frameSize * 2));
-    var _midBufR = new CBuffer(Math.round(_frameSize * 2));
+    var _midBufL = new CBuffer(Math.round(frameSize * 2));
+    var _midBufR = new CBuffer(Math.round(frameSize * 2));
     
     var receivedDecodedBufferR = new Float32List();
 
@@ -42,8 +43,8 @@
         
         do {
             
-            var bufL = il.subarray(_position, _position + _frameSize);
-            var bufR = ir.subarray(_position, _position + _frameSize);
+            var bufL = il.subarray(_position, _position + frameSize);
+            var bufR = ir.subarray(_position, _position + frameSize);
             
             if (_newAlpha != undefined && _newAlpha != _pvL.get_alpha()) {
                 _pvL.set_alpha(_newAlpha);
@@ -54,7 +55,7 @@
             
             /* LEFT */
             _pvL.process(bufL, _midBufL);
-            console.warn(_midBufL);
+            //console.warn(_midBufL);
             _pvR.process(bufR, _midBufR);
             for (var i = sampleCounter; _midBufL.size > 0 && i < ol.length; i++) {
                 ol[i] = _midBufL.shift();
