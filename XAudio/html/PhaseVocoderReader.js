@@ -1,99 +1,87 @@
-﻿function PhaseVocoderReader(source, _frameSize, _sampleRate) {
+﻿function PhaseVocoderReader(source, _sampleRate, _frameSize) {
     
     var self = this;
-    var frameSize = _frameSize || 4096 / 8;
     var sampleRate = _sampleRate || 44100;
-    var _pvL = new PhaseVocoder(frameSize, sampleRate); _pvL.init();
-    var _pvR = new PhaseVocoder(frameSize, sampleRate); _pvR.init();
-    var _buffer;
-    var _position = 0;
-    var _newAlpha = 1;
+    var frameSize = _frameSize || 512;
+    var position = 0;
+    var alpha = 1;
     
-    var _midBufL = new CBuffer(Math.round(frameSize * 2));
-    var _midBufR = new CBuffer(Math.round(frameSize * 2));
-    
-    var receivedDecodedBufferR = new Float32List();
-    
+    var phaseVocoder = new PhaseVocoder(frameSize, sampleRate); phaseVocoder.init();
+
+    var input = new Float32List();
+    var outProcessedBuffer = new CBuffer(Math.round(frameSize * 2));
+
     self.reachedEnd = false;
+
+    var shifToOutput = function (offset, ol, samplesRequested) {
+        var sampleCounter = offset;
+
+        while (outProcessedBuffer.size > 0 && sampleCounter < samplesRequested) {
+            sampleCounter++;
+            ol[sampleCounter] = outProcessedBuffer.shift();
+        }
+
+        return sampleCounter;
+    };
+    
+    var adjustIfNewAlpha = function () {
+        if (alpha != undefined && alpha != phaseVocoder.get_alpha()) {
+            console.log("New Alpha detected " + alpha);
+            phaseVocoder.set_alpha(alpha);
+            alpha = undefined;
+        }
+    }
+    
+    var setReachedEnd =  function() {
+        self.reachedEnd = source.reachedEnd && outProcessedBuffer.size == 0;
+    }
+    
+    var readFromSource = function(samplesRequested) {
+        var decodedFloat = source.read(samplesRequested);
+        console.info('PhaseVocoderReader:samplesGotten : ' + decodedFloat.length);
+        input.concat(decodedFloat);
+    }
 
     self.read = function(samplesRequested) {
         console.info('PhaseVocoderReader:samplesRequested : ' + samplesRequested);
-        var decodedFloat = source.read(samplesRequested*2);
-        console.info('PhaseVocoderReader:samplesGotten : ' + decodedFloat.length);
 
-        receivedDecodedBufferR.concat(decodedFloat);
-        var sampleCounter = 0;
+        var output = new Float32Array(samplesRequested);
+
+        var sampleCounter = shifToOutput(0, output, samplesRequested);
         
-        //var il = _buffer.getChannelData(0);
-        var il = receivedDecodedBufferR;
-        //var ir = _buffer.getChannelData(0);
-        var ir = receivedDecodedBufferR;
-        //var ol = outputAudioBuffer.getChannelData(0);
-        var ol = new Float32Array(samplesRequested);
-        //var or = outputAudioBuffer.getChannelData(1);
-        var or = new Float32Array(samplesRequested);
-        
-        
-        while (_midBufR.size > 0 && sampleCounter < ol.length) {
-            var i = sampleCounter++;
-            ol[i] = _midBufL.shift();
-            or[i] = _midBufR.shift();
+        if (sampleCounter >= samplesRequested || source.reachedEnd) {
+            setReachedEnd();
+            console.info("PhaseVocoderReader:samplesToReturn " + output.length);
+            return output;
         }
-        
-        if (sampleCounter == ol.length)
-            return ol;
-        
-        do {
-            
-            var bufL = il.subarray(_position, _position + frameSize);
-            var bufR = ir.subarray(_position, _position + frameSize);
-            
-            if (_newAlpha != undefined && _newAlpha != _pvL.get_alpha()) {
-                _pvL.set_alpha(_newAlpha);
-                _pvR.set_alpha(_newAlpha);
-                _newAlpha = undefined;
-            }
-            
-            
-            /* LEFT */
-            _pvL.process(bufL, _midBufL);
-            //console.warn(_midBufL);
-            _pvR.process(bufR, _midBufR);
-            for (var i = sampleCounter; _midBufL.size > 0 && i < ol.length; i++) {
-                ol[i] = _midBufL.shift();
-                or[i] = _midBufR.shift();
-            }
-            
-            sampleCounter += _pvL.get_synthesis_hop();
-            
-            _position += _pvL.get_analysis_hop();
-            console.info('new position ' + _position);
-        } while (sampleCounter < ol.length);
 
-        return ol;
+        readFromSource(samplesRequested);
+
+        do {
+            adjustIfNewAlpha();
+
+            if (position + frameSize >= input.length)
+                readFromSource(frameSize);
+                
+            var bufL = input.subarray(position, position + frameSize);
+
+            phaseVocoder.process(bufL, outProcessedBuffer);
+
+            shifToOutput(sampleCounter, output, samplesRequested);
+
+            sampleCounter += phaseVocoder.get_synthesis_hop();
+            position += phaseVocoder.get_analysis_hop();
+            //console.info('new position ' + position);
+
+        } while (sampleCounter < samplesRequested);
+        
+        setReachedEnd();
+        console.info("PhaseVocoderReader:samplesToReturn " + output.length);
+        return output;
     }
     
     self.speed = function(speed){
-        _newAlpha = 2 - speed;
-        console.info("speed "+speed + " alpha" + _newAlpha);
+        alpha = 2 - speed;
+        console.info("speed "+speed + " alpha" + alpha);
     }
-
-    Object.defineProperties(this, {
-        'position' : {
-            get : function () {
-                return _position;
-            }, 
-            set : function (newPosition) {
-                _position = newPosition;
-            }
-        }, 
-        'alpha' : {
-            get : function () {
-                return _pvL.get_alpha();
-            }, 
-            set : function (newAlpha) {
-                _newAlpha = newAlpha;
-            }
-        }
-    });
 }

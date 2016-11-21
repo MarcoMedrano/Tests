@@ -15,12 +15,9 @@ function XAudioPlayer(buffer, _onEndedCallback) {
     var wav = null;
     var xAudioServer = null;
 
-    var rawBufferReader = null;
-    var pcmReader = null;
-    var gsmReader = null;
     var currentReader = null;
-
-    var phaseVocoderProcessor = null;
+    var normalSpeedReader = null;
+    var changedSpeedReader = null;
 
     var onEndedCallback = null;
 
@@ -28,13 +25,9 @@ function XAudioPlayer(buffer, _onEndedCallback) {
 
     var getSamplesCallback = function (samplesRequested) {
 
-        var decodedFloat =  currentReader.read(samplesRequested * (speed != 1 ?  2 : 1));
+        var decodedFloat =  currentReader.read(samplesRequested);
         reachedEnd = currentReader.reachedEnd;
-
-        //if (speed != 1) {
-        //    decodedFloat = phaseVocoderProcessor.process(decodedFloat, samplesRequested);
-        //}
-
+        
         return decodedFloat;
     };
 
@@ -57,17 +50,12 @@ function XAudioPlayer(buffer, _onEndedCallback) {
     self.speed = function (speedRequested) {
         speed = speedRequested;
         
-        if (speed == 1) {
-            if (wav.format.formatID == 'gsm')
-                currentReader = gsmReader;
-            else
-                currentReader = pcmReader;
-        } 
-        else {
-            currentReader = phaseVocoderProcessor;
-        }
+        if (speed == 1)
+            currentReader = normalSpeedReader;
+        else 
+            currentReader = changedSpeedReader;
 
-        phaseVocoderProcessor.speed(speedRequested);
+        changedSpeedReader.speed(speedRequested);
     };
     
     self.init = function (buffer, _onEndedCallback) {
@@ -78,16 +66,13 @@ function XAudioPlayer(buffer, _onEndedCallback) {
         wav.ReadHeader();
         var rawData = buffer.slice(wav.GetHeaderSize(), buffer.byteLength);
         
-        rawBufferReader = new RawBufferReader(rawData);
-        pcmReader = new PcmReader(rawBufferReader, wav.format.significantBitsPerSample, wav.format.channelsPerFrame);
-        gsmReader = new PcmReader(new GsmReader(rawBufferReader, wav.format.blockAlign, wav.format.samplesPerBlock), wav.format.significantBitsPerSample, wav.format.channelsPerFrame);
-        //gsmReader = new GsmReader(rawBufferReader, wav.format.blockAlign, wav.format.samplesPerBlock);
-        if (wav.format.formatID == 'gsm')
-            currentReader = gsmReader;
-        else 
-            currentReader = pcmReader;
-
-        phaseVocoderProcessor = new PhaseVocoderReader(currentReader);
+        var rawBufferReader = new RawBufferReader(rawData);
+        var pcmReader = new PcmReader(rawBufferReader, wav.format.significantBitsPerSample, wav.format.channelsPerFrame);
+        var gsmReader = new PcmReader(new GsmReader(rawBufferReader, wav.format.blockAlign, wav.format.samplesPerBlock), wav.format.significantBitsPerSample, wav.format.channelsPerFrame);
+        
+        normalSpeedReader = wav.format.formatID == 'gsm' ? gsmReader : pcmReader;
+        changedSpeedReader = new PhaseVocoderReader(normalSpeedReader, wav.format.sampleRate);
+        currentReader = normalSpeedReader;
 
         xAudioServer = new XAudioServer(
             wav.format.channelsPerFrame,
