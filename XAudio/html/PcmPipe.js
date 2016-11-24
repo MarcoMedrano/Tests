@@ -1,4 +1,4 @@
-﻿function PcmReader(source, _significantBitsPerSample, channelsPerFrame) {
+﻿function PcmPipe(source, _significantBitsPerSample, channelsPerFrame) {
 
     var self = this;
     var significantBitsPerSample = _significantBitsPerSample || 16;

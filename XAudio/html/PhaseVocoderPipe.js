@@ -1,4 +1,4 @@
-﻿function PhaseVocoderReader(source, _sampleRate, _frameSize) {
+﻿function PhaseVocoderPipe(source, _sampleRate, _frameSize) {
     
     var self = this;
     var sampleRate = _sampleRate || 44100;

@@ -30,10 +30,10 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="html\GsmReader.js" />
-    <Compile Include="html\PcmReader.js" />
-    <Compile Include="html\PhaseVocoderReader.js" />
-    <Compile Include="html\RawBufferReader.js" />
+    <Compile Include="html\GsmPipe.js" />
+    <Compile Include="html\PcmPipe.js" />
+    <Compile Include="html\PhaseVocoderPipe.js" />
+    <Compile Include="html\RawBufferPipe.js" />
     <Compile Include="html\FileLoader.js" />
     <Compile Include="html\Float32List.js" />
     <Compile Include="html\GsmDecoder.js" />

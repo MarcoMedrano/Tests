@@ -1,4 +1,4 @@
-﻿function RawBufferReader(rawBuffer) {
+﻿function RawBufferPipe(rawBuffer) {
 
     var self = this;
     var bufferOffset = 0;

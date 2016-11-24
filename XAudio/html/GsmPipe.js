@@ -25,16 +25,7 @@
         
         self.reachedEnd = source.reachedEnd;
         var rawBuffer = Module.HEAPU8.buffer.slice(buf, buf + len2);
-        return rawBuffer;
-        var int16Array = new Int16Array(rawBuffer);
-
-        console.debug("GsmReader:decodedBuffer length " + int16Array.length);
-        var decodedFloat = new Float32Array(int16Array.length);
         
-        for (var i = 0; i < decodedFloat.length; i++) {
-            decodedFloat[i] = (int16Array[i] / 32768);//2^15=32768
-        }
-
-        return decodedFloat;
+        return rawBuffer;
     };
 }
