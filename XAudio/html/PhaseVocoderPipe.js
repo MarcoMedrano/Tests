@@ -81,7 +81,7 @@
     }
     
     self.speed = function(speed){
-        alpha = 2 - speed;
-        console.info("speed "+speed + " alpha" + alpha);
+        alpha = parseFloat((2 - speed).toFixed(2));
+        console.info("speed "+speed + " alpha " + alpha);
     }
 }

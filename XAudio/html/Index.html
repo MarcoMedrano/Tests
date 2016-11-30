@@ -53,7 +53,7 @@
 
     var playing = false;
     var player = null;//Current player 
-    var speed = 1;
+    var speed = 1.0;
     var elapsedTimeIntervalId = -1;
 
     var playStopButton = document.querySelector('button[id="playstop"]');
@@ -93,15 +93,17 @@
     }
 
     function speedUp() {
-        speed += 0.20;
-        if(player) player.speed(speed);
-        speedValueSpan.innerHTML = (speed * 100) + "%";
+        speed = parseFloat((speed + 0.20).toFixed(2));
+        speedValueSpan.innerHTML = Math.round(speed * 100) + "%";
+
+        if (player) player.speed(speed);
     }
 
     function speedDown() {
-        speed -= 0.20;
+        speed = parseFloat((speed - 0.20).toFixed(2));
+        speedValueSpan.innerHTML = Math.round(speed * 100) + "%";
+
         if (player) player.speed(speed);
-        speedValueSpan.innerHTML = (speed * 100) + "%";
     }
 
     function startRunningElapsedTime() {
