@@ -3,10 +3,10 @@
     var self = this;
     var sampleRate = _sampleRate || 44100;
     var frameSize = _frameSize || 512;
-    var position = 0;
     var alpha = 1;
     
-    var phaseVocoder = new PhaseVocoder(frameSize, sampleRate); phaseVocoder.init();
+    var phaseVocoder = new PhaseVocoder(frameSize, sampleRate);
+    phaseVocoder.init();
 
     var input = new Float32List();
     var outProcessedBuffer = new CBuffer(Math.round(frameSize * 2));
@@ -60,18 +60,17 @@
         do {
             adjustIfNewAlpha();
 
-            if (position + frameSize >= input.length)
+            if (frameSize >= input.length)
                 readFromSource(frameSize);
-                
-            var bufL = input.subarray(position, position + frameSize);
+
+            var bufL = input.subarray(0, frameSize).toArray();
 
             phaseVocoder.process(bufL, outProcessedBuffer);
 
             shifToOutput(sampleCounter, output, samplesRequested);
 
             sampleCounter += phaseVocoder.get_synthesis_hop();
-            position += phaseVocoder.get_analysis_hop();
-            //console.info('new position ' + position);
+            input = input.slice(phaseVocoder.get_analysis_hop());
 
         } while (sampleCounter < samplesRequested);
         

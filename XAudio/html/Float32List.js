@@ -24,9 +24,10 @@
     }
 
     self.concat =  function (dataToAdd){
-        if (self.length + dataToAdd.length >= internalArray.length) {
+        if (self.length + dataToAdd.length > internalArray.length) {
             increaseInternalArray(self.length + dataToAdd.length);
         }
+
         internalArray.set(dataToAdd, self.length);
         self.length += dataToAdd.length;
     }
@@ -34,6 +35,24 @@
     self.subarray = function (begin, end) {
         if (end > self.length) end = self.length;
 
-        return internalArray.subarray(begin, end);
+        var array = internalArray.subarray(begin, end);
+        var floatList = new Float32List(array.length);
+        floatList.concat(array);
+
+        return floatList;
+    }
+
+    self.slice = function(begin, _end) {
+        var end = _end || self.length;
+
+        var array = internalArray.slice(begin, end);
+        var floatList = new Float32List(array.length);
+        floatList.concat(array);
+
+        return floatList;
+    }
+    
+    self.toArray = function() {
+        return internalArray.subarray(0, self.length);
     }
 }
