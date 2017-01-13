@@ -50,7 +50,7 @@ function XAudioPlayer(buffer, _onEndedCallback) {
     self.speed = function (speedRequested) {
         speed = speedRequested;
         
-        currentPipe = speed == 1 ? normalSpeedPipe : changedSpeedPipe;
+        //currentPipe = speed == 1 ? normalSpeedPipe : changedSpeedPipe;
         
         if(changedSpeedPipe)
             changedSpeedPipe.speed(speedRequested);
@@ -66,11 +66,11 @@ function XAudioPlayer(buffer, _onEndedCallback) {
         
         var rawBufferReader = new RawBufferPipe(rawData);
         var pcmReader = new PcmPipe(rawBufferReader, wav.format.significantBitsPerSample, wav.format.channelsPerFrame);
-        var gsmReader = new PcmPipe(new GsmReader(rawBufferReader, wav.format.blockAlign, wav.format.samplesPerBlock), wav.format.significantBitsPerSample, wav.format.channelsPerFrame);
+        var gsmReader = new PcmPipe(new GsmPipe(rawBufferReader, wav.format.blockAlign, wav.format.samplesPerBlock), wav.format.significantBitsPerSample, wav.format.channelsPerFrame);
         
         normalSpeedPipe = wav.format.formatID == 'gsm' ? gsmReader : pcmReader;
         changedSpeedPipe = new PhaseVocoderPipe(normalSpeedPipe, wav.format.sampleRate);
-        currentPipe = normalSpeedPipe;
+        currentPipe = changedSpeedPipe;
 
         xAudioServer = new XAudioServer(
             wav.format.channelsPerFrame,

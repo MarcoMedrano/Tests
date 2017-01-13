@@ -53,6 +53,7 @@
     <Content Include="html\css\meteor-slides.css" />
     <Content Include="html\css\style.css" />
     <Content Include="html\Index.html" />
+    <Content Include="html\res\gsm-mono2.wav" />
     <Content Include="html\res\gsm-mono.wav" />
     <Content Include="html\res\pcm-mono.wav" />
     <Content Include="html\res\pcm-stereo.wav" />

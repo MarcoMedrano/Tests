@@ -1,4 +1,5 @@
-﻿function GsmReader(source, _blockAlign, _samplesPerBlock) {
+﻿// Defaults from: https://github.com/naudio/NAudio/blob/85b68dd1b9bdd144459506f80217087e7e2c9907/NAudio/Wave/WaveFormats/Gsm610WaveFormat.cs
+function GsmPipe(source, _blockAlign, _samplesPerBlock) {
     var self = this;
     var blockAlign = _blockAlign || 65;
     var samplesPerBlock = _samplesPerBlock || 320;

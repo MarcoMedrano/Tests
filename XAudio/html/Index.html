@@ -30,7 +30,8 @@
 <br>
 <div>
     <h2>Files</h2><br>
-    <label><input type='radio' name='file' value='/res/gsm-mono.wav' checked>/res/gsm-mono.wav</label><br>
+    <label><input type='radio' name='file' value='/res/gsm-mono.wav' >/res/gsm-mono.wav</label><br>
+    <label><input type='radio' name='file' value='/res/gsm-mono2.wav' checked>/res/gsm-mono2.wav</label><br>
     <label><input type='radio' name='file' value='/res/pcm-mono.wav'> /res/pcm-mono.wav</label><br>
     <label><input type='radio' name='file' value='/res/pcm-stereo.wav'> /res/pcm-stereo.wav</label><br>
     <label><input type='radio' name='file' value='/res/pcm-stereo2.wav'> /res/pcm-stereo2.wav</label><br>
@@ -93,14 +94,14 @@
     }
 
     function speedUp() {
-        speed = parseFloat((speed + 0.20).toFixed(2));
+        speed = parseFloat((speed + 0.10).toFixed(2));
         speedValueSpan.innerHTML = Math.round(speed * 100) + "%";
 
         if (player) player.speed(speed);
     }
 
     function speedDown() {
-        speed = parseFloat((speed - 0.20).toFixed(2));
+        speed = parseFloat((speed - 0.10).toFixed(2));
         speedValueSpan.innerHTML = Math.round(speed * 100) + "%";
 
         if (player) player.speed(speed);
