@@ -38,6 +38,7 @@
     }
     
     self.read = function (samplesRequested) {
+        console.info("PhaseVocoderPipe:-----------------------------------------------------");
         console.info('PhaseVocoderPipe:samplesRequested : ' + samplesRequested);
         
         var output = new Float32Array(samplesRequested);
@@ -46,11 +47,11 @@
         
         if (sampleCounter >= samplesRequested || source.reachedEnd && input.length == 0) {
             setReachedEnd();
-            //console.info("PhaseVocoderPipe:samplesToReturn " + output.length);
+            console.info("PhaseVocoderPipe:samplesToReturn " + output.length);
             return output;
         }
         
-        readFromSource(samplesRequested);
+        //readFromSource(samplesRequested);
         
         do {
             if (frameSize >= input.length)
@@ -64,12 +65,11 @@
             
             sampleCounter += phaseVocoder.get_synthesis_hop();
             input = input.slice(phaseVocoder.get_analysis_hop());
-            //input = input.slice(frameSize);
 
         } while (sampleCounter < samplesRequested);
         
         setReachedEnd();
-        //console.info("PhaseVocoderPipe:samplesToReturn " + output.length);
+        console.info("PhaseVocoderPipe:samplesToReturn " + output.length);
         return output;
     }
     

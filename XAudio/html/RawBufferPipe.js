@@ -12,4 +12,8 @@
         
         return rawBlock;
     }
+
+    self.getPosition = function () {
+        return bufferOffset;
+    }
 }

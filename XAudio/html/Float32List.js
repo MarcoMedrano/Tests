@@ -1,4 +1,4 @@
-﻿function Float32List (initialSize) {
+function Float32List (initialSize) {
     var self = this;
     var internalArray = new Float32Array(initialSize || 1024*256);
 
@@ -17,7 +17,7 @@
 
     var increaseInternalArray = function (minimumSize) {
         var newSize = getBestSize(minimumSize);
-        console.warn("Float32List:Increasing internal array to " + newSize + ", " + (newSize * internalArray.BYTES_PER_ELEMENT)/1024/1024 + "(MB) . Probably you need to set bigger default size.");
+        //console.warn("Float32List:Increasing internal array to " + newSize + ", " + (newSize * internalArray.BYTES_PER_ELEMENT)/1024/1024 + "(MB) . Probably you need to set bigger default size.");
         var newData = new Float32Array(newSize);
         newData.set(internalArray);
         internalArray = newData;

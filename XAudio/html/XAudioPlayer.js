@@ -16,18 +16,27 @@ function XAudioPlayer(buffer, _onEndedCallback) {
     var xAudioServer = null;
 
     var currentPipe = null;
+    var rawBufferReader = null;
     var normalSpeedPipe = null;
     var changedSpeedPipe = null;
 
     var onEndedCallback = null;
 
-    var failureCallback = function(e) {console.error("XAudioPlayer: " + e);}
+    var failureCallback = function (e) { console.error("XAudioPlayer: " + e); }
+
+    var printCurrentTime = function (){
+        var form = wav.GetFormatInfo();
+        var bytesPerSecond = form.sampleRate / form.samplesPerBlock * form.blockAlign;
+        var bytesConsumed = rawBufferReader.getPosition();
+
+        console.warn("Time: " + bytesConsumed/bytesPerSecond);
+    }
 
     var getSamplesCallback = function (samplesRequested) {
-
+        printCurrentTime();
         var decodedFloat =  currentPipe.read(samplesRequested);
         reachedEnd = currentPipe.reachedEnd;
-        
+
         return decodedFloat;
     };
 
@@ -64,7 +73,7 @@ function XAudioPlayer(buffer, _onEndedCallback) {
         wav.ReadHeader();
         var rawData = buffer.slice(wav.GetHeaderSize(), buffer.byteLength);
         
-        var rawBufferReader = new RawBufferPipe(rawData);
+        rawBufferReader = new RawBufferPipe(rawData);
         var pcmReader = new PcmPipe(rawBufferReader, wav.format.significantBitsPerSample, wav.format.channelsPerFrame);
         var gsmReader = new PcmPipe(new GsmPipe(rawBufferReader, wav.format.blockAlign, wav.format.samplesPerBlock), wav.format.significantBitsPerSample, wav.format.channelsPerFrame);
         
