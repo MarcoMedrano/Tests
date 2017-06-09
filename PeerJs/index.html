@@ -1,0 +1,68 @@
+<html>
+
+<head>
+    <script src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
+</head>
+
+<script>
+    var peer = new Peer({ key: 'lwjd5qra8257b9' });
+
+    peer.on('open', function (id) {
+        console.log('My peer ID is: ' + id);
+    });
+
+    //receive
+    peer.on('connection', function (conn) {
+        conn.on('data', function (data) {
+            // Will print 'hi!'
+            console.log(data);
+        });
+    });
+
+    //answer call
+    var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    peer.on('call', function (call) {
+        console.info('call received');
+        call.answer(); // Answer the call with an A/V stream.
+        call.on('stream', function (remoteStream) {
+           var videoElement = document.getElementById('video');
+           videoElement.src = URL.createObjectURL(remoteStream);
+           //videoElement.src = remoteStream;
+        });
+        
+    });
+
+    function connect() {
+        var peerId = document.getElementById('peerId').value;
+        console.log('Connecting to ' + peerId);
+
+        var conn = peer.connect(peerId);
+        conn.on('open', function () {
+
+            conn.send('hi!');
+
+            console.info('calling sending stream');
+            navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+            navigator.getUserMedia({ video: true, audio: true }, function (stream) {
+
+                var call = peer.call(peerId, stream);
+                call.on('stream', function (remoteStream) {
+                    console.inf('receiving stream answer')
+                    // Show stream in some video/canvas element.
+                });
+            }, function (err) {
+                console.log('Failed to get local stream', err);
+            });
+
+        });
+    }
+
+</script>
+
+<body>
+    <input id="peerId" type="text">
+    <button onclick="connect()">Connect</button>
+    <video id='video' >
+</body>
+
+</html>
