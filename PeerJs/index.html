@@ -42,8 +42,25 @@
             conn.send('hi!');
 
             console.info('calling sending stream');
+            //https://github.com/muaz-khan/WebRTC-Experiment/tree/master/Pluginfree-Screen-Sharing
+            var screen_constraints = {
+                mandatory: {
+                    chromeMediaSource: 'screen',
+                    maxWidth: 1920,
+                    maxHeight: 1080,
+                    minAspectRatio: 1.77
+                },
+                optional: []
+            };
+
+            var session = {
+                audio: false,
+                video: screen_constraints
+            };
+
+            var videoCamSession = { video: true, audio: true };
             navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-            navigator.getUserMedia({ video: true, audio: true }, function (stream) {
+            navigator.getUserMedia(session, function (stream) {
 
                 var call = peer.call(peerId, stream);
                 call.on('stream', function (remoteStream) {
