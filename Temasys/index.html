@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <script src="node_modules/jquery/dist/jquery.js" type="text/javascript"></script> 
+  </head>
+  
+<script>
+    var sl = new Skylink();
+sl.init('a6be8037-cfa3-4deb-ba86-7542eb88dc27');
+ 
+// A new Peer has joined the Room
+sl.on('peerJoined', function(peerId, peerInfo){
+  console.log('Peer ' + peerId + ' has joined the room');
+  var peerVideo = document.createElement('video');
+  peerVideo.id = peerId + '_video';
+  peerVideo.autoplay = 'autoplay';
+  document.getElementById('peerVideoList').appendChild(peerVideo);
+});
+// Peer has Audio/Video stream to add
+sl.on('addPeerStream', function(peerId, stream){
+  // attachMediaStream is a Adapter function
+  attachMediaStream(document.getElementById(peerId + '_video'), stream);
+});
+// User's Audio/Video stream has been successfully added
+sl.on('mediaAccessSuccess', function(stream){
+  // attachMediaStream is a Adapter function
+  attachMediaStream( document.getElementById('localVideo'), stream );
+});
+// A Peer has left the room
+sl.on('peerLeft', function(peerId){
+  var peer = document.getElementById(peerId + '_video');
+  document.getElementById('peerVideoList').removeChild(peer);
+}); 
+  
+function joinRoom () { sl.joinRoom({ audio : true, video : true }); }
+function leaveRoom () { sl.leaveRoom(); } 
+</script>
+<body>
+    <video id="localVideo" autoplay="autoplay"></video>
+    <div id="peerVideoList"></div>
+    <button type="button" onclick="joinRoom()">Start Call</button>
+    <button type="button" onclick="leaveRoom()">End Call</button>
+</body>
+
+</html>
