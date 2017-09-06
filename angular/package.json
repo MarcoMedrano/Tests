@@ -1,0 +1,15 @@
+{
+  "name": "angular",
+  "version": "1.0.0",
+  "description": "Just a hello world",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Marco Medrano",
+  "license": "ISC",
+  "devDependencies": {
+    "express": "^4.15.4"
+  }
+}
