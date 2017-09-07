@@ -1,0 +1,30 @@
+<script id='code' type='text/plain'>
+var j = 0;
+  self.onmessage = function	(e){
+  	console.log('processsing ' + j);
+  	for (var i = 0; i < 1000000000; i++) {
+  	}
+
+  	self.postMessage(j++);
+  }
+</script>
+<script>
+  var code = document.getElementById('code').textContent;
+  var blob = new Blob([code], { type: 'application/javascript' });
+  var url = URL.createObjectURL(blob);
+  var worker = new Worker(url);
+  worker.onmessage = function(e) {
+    console.log('Finished ' + e.data);
+  };
+
+  worker.postMessage('whatever');
+  worker.postMessage('whatever');
+  worker.postMessage('whatever');
+  worker.postMessage('whatever');
+  worker.postMessage('whatever');
+  setTimeout(function(){
+  	worker.terminate();
+  }, 10);
+
+  worker.postMessage('whatever');
+</script>

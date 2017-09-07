@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Web Worker Crap I hate the fucking JS</title>
+    <script src="task.js"></script>
+</head>
+<body style="background-color:darkgray">
+    <script>
+        var worker = new Worker('task.js');
+        var view = new Uint8Array(1024*1024*100);
+
+        worker.addEventListener('message', function(e) {
+            view = new Uint8Array(e.data.data);
+
+            console.log('Worker said: ' +  e.data.text + "[0] ="+ view[0]);
+        }, false);
+
+        worker.postMessage({text:'init', data:view.buffer}, [view.buffer]);
+        worker.postMessage({text:'next', data:view.buffer}, [view.buffer]);
+
+        // worker.postMessage({text:'init', data:view.buffer}, [view.buffer]);
+        // worker.postMessage({text:'next', data:view.buffer}, [view.buffer]);
+        // worker.postMessage({text:'next', data:view.buffer}, [view.buffer]);
+        // worker.postMessage({text:'next', data:view.buffer}, [view.buffer]);
+        // worker.postMessage({text:'next', data:view.buffer}, [view.buffer]);
+        // for (var i = 0; i < 100; i++) {
+        //     worker.postMessage({text:'next', data:view.buffer});
+        // };
+    </script>
+
+</body>
+</html>

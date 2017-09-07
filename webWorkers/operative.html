@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>OPERATIVE</title>
+    <script src="operative.js"></script>
+</head>
+<body style="background-color:darkgray">
+    <script>
+        var worker = operative({
+            one:function(data){
+                //var obj = {text:'hey', data:data};
+                obj = {text:'hey', data:data};
+                var view = new Uint8Array(obj.data);
+                view [0] = 1;
+
+                //return obj;
+                 var deferred = this.deferred();
+                deferred.transferResolve(obj, [obj.data]);
+            },
+            //two:function(obj){
+            two:function(data){
+                obj.data = data;
+                console.log('WORKER text='+ obj.text + ' data=' + obj.data.byteLength);
+                var view = new Uint8Array(obj.data);
+                view [0] += 1;
+ 
+               // return obj;
+               var deferred = this.deferred();
+                deferred.transferResolve(obj, [obj.data]);
+            }
+        });
+
+
+        var objLocal = null;
+        var callback =  function(obj) {
+            objLocal = obj;
+            view = new Uint8Array(obj.data);
+            console.log('worker said: ' +  obj.text + "[0] ="+ view[0]);
+        };
+
+        var view = new Uint8Array(1024*1024*100);
+ 
+        //worker.one(view.buffer).then(callback);
+        worker.one.transfer(view.buffer, [view.buffer]).then(callback);
+//        worker.two(objLocal).then(callback);
+        //worker.two.transfer(objLocal, [objLocal.data]).then(callback);
+        //Use this line manually
+        worker.two.transfer(objLocal.data, [objLocal.data]).then(callback);
+
+       </script>
+
+</body>
+</html>
