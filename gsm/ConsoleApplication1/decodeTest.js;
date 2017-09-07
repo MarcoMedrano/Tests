@@ -1,0 +1,14 @@
+var output = new Uint32Array(640);
+var input = new Uint32Array(65); for( i = 0; i<65; i++) input[i] = 5;
+
+var buf = Module._malloc(output.length*output.BYTES_PER_ELEMENT);
+Module.ccall('init', 'number', [], [])
+//Module.HEAPU8.set(output, buf);
+console.log('JS - buf*', buf);
+//console.log('JS - Before &buf', getValue(buf, '*'));
+Module.ccall('decode', 'number', ['number', 'number', 'pointer'], [input, 65, buf]);
+//buf += (4*320);
+//console.log('JS - buf*', buf);
+console.log('JS - &buf', getValue(buf, 'i32'));
+for (i = -1 ; i < 65; i++)
+	console.log('JS - &buf', getValue(buf + 1, 'i32'));
