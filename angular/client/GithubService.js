@@ -23,7 +23,7 @@
     };
   }
   
-  var module = angular.module("GithubViewer");
+  var module = angular.module("GithubModule");
   module.factory("githubService", GithubService)
   
 }())

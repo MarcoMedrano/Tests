@@ -1,14 +1,17 @@
 <!DOCTYPE html>
-<html ng-app="GithubViewer">
+<html ng-app="GithubModule">
 
   <head >
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js" ></script>
+    <script src="/angular-route/angular-route.js" ></script>
+    <script src="GithubModule.js"></script>
     <script src="GithubController.js"></script>
+    <script src="/repos/RepoController.js"></script>
     <script src="GithubService.js"></script>
   </head>
 
-  <body ng-controller="GithubController">
-    <div ng-include="'GithubView.html'"/>
+  <body>
+    <h1>Github Viewer</h1>
+    <div ng-view></div>      
   </body>
-
 </html>

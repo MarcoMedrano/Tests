@@ -1,8 +1,9 @@
 (function () {
 
-  GithubController = function ($scope, githubService) {
+  GithubController = function ($scope, githubService, $routeParams) {
 
-    $scope.message = "Github Viewer";
+    $scope.message = "User view";
+    $scope.usernameToFind = $routeParams.username;
 
     $scope.clickSearch = function (usernameToFind) {
       githubService.getUser(usernameToFind)
@@ -18,7 +19,7 @@
     }
   }
 
-  var githubViewer = angular.module("GithubViewer", []);
-  githubViewer.controller("GithubController", GithubController);
+  var githubModule = angular.module("GithubModule");
+  githubModule.controller("GithubController", GithubController);
 
 }());

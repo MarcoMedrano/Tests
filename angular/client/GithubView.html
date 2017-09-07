@@ -1,10 +1,10 @@
 <div>
-    <h1>{{message}}</h1>
+    <h2>{{message}}</h2>
 
     <form name="searchUser" ng-submit="clickSearch(usernameToFind)">
         <input required type="search" placeholder="User name to find" ng-model="usernameToFind" />
         <input type="submit" value="Search"> {{usernameToFind}}
     </form>
 
-    <div ng-include="'UserDetails.html'" ng-show="user" />
+    <div ng-include="'UserDetailsView.html'" ng-show="user" />
 </body>

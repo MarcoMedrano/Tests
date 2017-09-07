@@ -11,5 +11,9 @@
   "license": "ISC",
   "devDependencies": {
     "express": "^4.15.4"
+  },
+  "dependencies": {
+    "angular-route": "^1.6.6",
+    "path": "^0.12.7"
   }
 }
