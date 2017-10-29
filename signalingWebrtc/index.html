@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta name="keywords" content="WebRTC, HTML5, JavaScript" />
+  <meta name="description" content="WebRTC Reference App" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1">
+
+  <title>WebRTC client</title>
+
+</head>
+
+<body>
+  <div>
+    <div>
+      Local Video
+      <video id="selfView" autoplay=""></video>
+    </div>
+    <div>
+      Remote Video
+      <video id="remoteView" autoplay=""></video>
+    </div>
+  </div>
+
+  <script src='http://localhost:8080/socket.io/socket.io.js'></script>
+  <script src='client/lib/adapter.js'></script>
+  <script src="client/SignalingChannel.js"></script>
+  <script src="client/index.js"></script>
+  <button id="startButton" onclick="start()">Start</button>
+</body>
+
+</html>
